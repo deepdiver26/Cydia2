@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="initial-scale=1.0, width=device-width, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<title>Cydia 2.0</title>
+<link rel="stylesheet" type="text/css" href="css/ios6.css">
+</head>
+<body>
+
+<div class="navbar">
+  <a class="nav-btn nav-right" href="softboard.html">Softboard</a>
+  <h1 class="nav-title">Cydia 2.0</h1>
+</div>
+
+<div class="content">
+
+  <div class="group-header">Compatible with</div>
+  <div class="group">
+    <div class="row">
+      <span class="row-label">iOS version</span>
+      <select id="ios-select" class="ios-select">
+        <option value="all">All</option>
+        <option value="1">iOS 1</option>
+        <option value="2">iOS 2</option>
+        <option value="3">iOS 3</option>
+        <option value="4">iOS 4</option>
+        <option value="5">iOS 5</option>
+        <option value="6" selected>iOS 6</option>
+        <option value="7">iOS 7</option>
+        <option value="8">iOS 8</option>
+        <option value="9">iOS 9</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="group-header">Repositories</div>
+  <div class="group" id="repo-list">
+    <div class="row"><span class="row-label muted">Loading…</span></div>
+  </div>
+
+  <div class="footer" id="updated-text"></div>
+</div>
+
+<script type="text/javascript" src="js/app.js"></script>
+</body>
+</html>
