@@ -1,0 +1,243 @@
+/* iOS 6 style. Plain CSS only: no variables, no flexbox, no grid. */
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: #dbdde3;
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 17px;
+  color: #000;
+  -webkit-text-size-adjust: none;
+}
+
+/* Navigation bar */
+.navbar {
+  position: relative;
+  height: 44px;
+  background: #6d84a3;
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#8195b2), to(#4d6990));
+  background-image: linear-gradient(#8195b2, #4d6990);
+  border-bottom: 1px solid #2b3f5c;
+  box-shadow: 0 1px 0 #a6b3c6 inset;
+  text-align: center;
+}
+.nav-title {
+  margin: 0;
+  padding-top: 10px;
+  font-size: 20px;
+  font-weight: bold;
+  color: #fff;
+  text-shadow: 0 -1px 0 #2b3f5c;
+}
+.nav-btn {
+  position: absolute;
+  top: 7px;
+  height: 30px;
+  line-height: 30px;
+  padding: 0 10px;
+  font-size: 14px;
+  font-weight: bold;
+  color: #fff;
+  text-decoration: none;
+  text-shadow: 0 -1px 0 #2b3f5c;
+  border: 1px solid #2b3f5c;
+  border-radius: 4px;
+  background: #7f93b0;
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#97a9c2), to(#60779a));
+  background-image: linear-gradient(#97a9c2, #60779a);
+}
+.nav-left { left: 6px; }
+.nav-right { right: 6px; }
+
+/* Content */
+.content {
+  padding: 0 0 20px 0;
+}
+.group-header {
+  padding: 18px 20px 6px 20px;
+  font-size: 15px;
+  font-weight: bold;
+  color: #4c566c;
+  text-shadow: 0 1px 0 #fff;
+}
+.group {
+  margin: 0 10px;
+  background: #fff;
+  border: 1px solid #b8bcc6;
+  border-radius: 9px;
+  overflow: hidden;
+}
+
+/* Rows */
+.row {
+  position: relative;
+  min-height: 44px;
+  padding: 0 15px;
+  border-top: 1px solid #c8c7cc;
+  line-height: 44px;
+  font-size: 17px;
+}
+.row:first-child {
+  border-top: 0;
+}
+.row-label {
+  color: #000;
+}
+.muted {
+  color: #8a8a8f;
+}
+.row-action {
+  display: block;
+  padding: 0 15px;
+  text-decoration: none;
+  color: #000;
+  min-height: 44px;
+  line-height: 44px;
+  border-top: 1px solid #c8c7cc;
+  position: relative;
+}
+a.row-action:active {
+  background: #d9d9d9;
+}
+.row-action:first-child {
+  border-top: 0;
+}
+.chevron {
+  position: absolute;
+  right: 14px;
+  top: 0;
+  font-size: 20px;
+  color: #c7c7cc;
+  font-weight: bold;
+  -webkit-transition: -webkit-transform 0.2s;
+}
+.chevron.open {
+  -webkit-transform: rotate(90deg);
+  transform: rotate(90deg);
+}
+
+/* Repo name, link and status row */
+.repo-name {
+  font-weight: bold;
+  display: inline-block;
+  width: 60%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+}
+.repo-url {
+  display: block;
+  font-size: 13px;
+  color: #385487;
+  line-height: 16px;
+  padding-bottom: 8px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.repo-main {
+  padding: 8px 0 8px 0;
+  line-height: 20px;
+  min-height: 44px;
+}
+.dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-right: 6px;
+  border-radius: 5px;
+  vertical-align: middle;
+  border: 1px solid rgba(0, 0, 0, 0.25);
+}
+.dot-green  { background: #4cd964; }
+.dot-orange { background: #ff9500; }
+.dot-red    { background: #ff3b30; }
+.dot-grey   { background: #b8b8bd; }
+
+.copy-btn {
+  float: right;
+  margin-top: 8px;
+  height: 28px;
+  line-height: 28px;
+  padding: 0 12px;
+  font-size: 14px;
+  font-weight: bold;
+  color: #385487;
+  text-shadow: 0 1px 0 #fff;
+  border: 1px solid #a8b1c1;
+  border-radius: 14px;
+  background: #f7f7f7;
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#e6e8ec));
+  background-image: linear-gradient(#ffffff, #e6e8ec);
+}
+.copy-btn:active {
+  background: #cfd5df;
+}
+
+/* Expanded tweak list */
+.tweaks {
+  background: #f3f4f7;
+  border-top: 1px solid #c8c7cc;
+  padding: 0;
+}
+.tweak {
+  padding: 10px 15px 10px 30px;
+  font-size: 15px;
+  border-top: 1px solid #e0e0e4;
+  line-height: 20px;
+}
+.tweak:first-child {
+  border-top: 0;
+}
+.tweak-desc {
+  display: block;
+  font-size: 13px;
+  color: #6d6d72;
+}
+
+/* iOS version dropdown */
+.row-label {
+  display: inline-block;
+}
+.ios-select {
+  position: absolute;
+  right: 10px;
+  top: 7px;
+  height: 30px;
+  font-size: 15px;
+  color: #385487;
+  background: #fff;
+  border: 0;
+}
+.footer {
+  padding: 14px 20px 0 20px;
+  font-size: 13px;
+  color: #4c566c;
+  text-align: center;
+  text-shadow: 0 1px 0 #fff;
+}
+
+/* Softboard posts */
+.post {
+  padding: 12px 15px;
+  border-top: 1px solid #c8c7cc;
+  line-height: 20px;
+}
+.post:first-child {
+  border-top: 0;
+}
+.post-author {
+  font-weight: bold;
+  color: #385487;
+  font-size: 15px;
+}
+.post-date {
+  font-size: 12px;
+  color: #8a8a8f;
+  padding-bottom: 4px;
+}
+.post-body {
+  font-size: 16px;
+  color: #000;
+}
