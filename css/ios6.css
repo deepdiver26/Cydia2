@@ -303,3 +303,28 @@ a.row-action:active {
   font-size: 16px;
   color: #000;
 }
+
+/* Sort, saved repos and the save button */
+.star {
+  color: #e8890c;
+  font-size: 14px;
+}
+.fav-btn {
+  display: inline-block;
+  height: 28px;
+  line-height: 26px;
+  padding: 0 14px;
+  font-size: 14px;
+  font-weight: bold;
+  color: #2f5ea8;
+  text-shadow: 0 1px 0 #ffffff;
+  border: 1px solid #9aa1ab;
+  border-radius: 14px;
+  background-color: #eceef2;
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#cdd2da));
+  background-image: linear-gradient(#ffffff, #cdd2da);
+}
+.fav-btn:active {
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#b9c0ca), to(#dfe3e9));
+  background-image: linear-gradient(#b9c0ca, #dfe3e9);
+}
