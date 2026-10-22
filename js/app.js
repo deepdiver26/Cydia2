@@ -182,7 +182,12 @@
         var tweaks = it.repo.tweaks || [];
         html += '<div class="tweaks">';
         for (var t = 0; t < tweaks.length; t++) {
-          html += '<div class="tweak">' + esc(tweaks[t].name);
+          html += '<div class="tweak">';
+          // Version sits on the right, so it's easy to scan
+          if (tweaks[t].version) {
+            html += '<span class="tweak-version">' + esc(tweaks[t].version) + '</span>';
+          }
+          html += esc(tweaks[t].name);
           if (tweaks[t].description) {
             html += '<span class="tweak-desc">' + esc(tweaks[t].description) + '</span>';
           }
