@@ -1,25 +1,27 @@
 [
   {
     "name": "repo1",
-    "url": "cydia.site1.com",
+    "url": "example-repo1.test",
     "serving": [6, 7, 9],
     "tweaks": [
-      { "name": "Example Tweak One", "description": "Sample entry. Replace with real tweaks." },
-      { "name": "Example Tweak Two", "description": "Sample entry." }
+      { "name": "Battery Percent Display", "description": "Shows the exact battery percentage in the status bar." },
+      { "name": "Quick Respring Button", "description": "Adds a one-tap respring option to the Control Center area." }
     ]
   },
   {
     "name": "repo2",
-    "url": "repo.nekokawa.com",
+    "url": "example-repo2.test",
     "serving": [5, 6, 7],
     "tweaks": [
-      { "name": "Example Tweak Three", "description": "Sample entry." }
+      { "name": "Custom Lock Screen Clock", "description": "Changes the lock screen clock font and size." }
     ]
   },
   {
     "name": "repo3",
-    "url": "tweaks.saurik.site",
+    "url": "example-repo3.test",
     "serving": [1, 2, 3, 4, 5, 6, 7, 8, 9],
-    "tweaks": []
+    "tweaks": [
+      { "name": "Notification Sound Pack", "description": "A set of alternative notification sounds." }
+    ]
   }
 ]
