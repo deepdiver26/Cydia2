@@ -122,6 +122,34 @@
       encodeURIComponent(title) + '&body=' + encodeURIComponent(body);
   }
 
+  function setShown(id, on) {
+    document.getElementById(id).style.display = on ? 'block' : 'none';
+  }
+
+  // Tweak detail sheet: shows one tweak's full details above the repo list
+  function showSheet(repo, tweak) {
+    var html = '<div class="tweak">';
+    if (tweak.version) {
+      html += '<span class="tweak-version">' + esc(tweak.version) + '</span>';
+    }
+    html += esc(tweak.name);
+    if (tweak.description) {
+      html += '<span class="tweak-desc">' + esc(tweak.description) + '</span>';
+    }
+    html += '<span class="tweak-desc">From ' + esc(repo.name) + ' (' + esc(repo.url) + ')</span>';
+    html += '</div>';
+    html += '<div class="tweak"><button class="add-btn sheet-close">Close</button></div>';
+    document.getElementById('sheet').innerHTML = html;
+    setShown('sheet-header', true);
+    setShown('sheet', true);
+    window.scrollTo(0, 0);
+  }
+
+  function hideSheet() {
+    setShown('sheet-header', false);
+    setShown('sheet', false);
+  }
+
   // Sorts the visible items. "default" keeps the order in repos.json.
   function sortItems(items, mode) {
     items.sort(function (a, b) {
@@ -137,11 +165,31 @@
     return items;
   }
 
+  // Repos whose owners updated them in the last 7 days, for the selected version
+  function renderRecent(version) {
+    var now = new Date().getTime();
+    var html = '';
+    var count = 0;
+    for (var i = 0; i < repos.length; i++) {
+      var repo = repos[i];
+      if (!repo.updated || !servesVersion(repo, version)) { continue; }
+      if (now - Number(repo.updated) > 7 * DAY) { continue; }
+      count++;
+      html += '<div class="row"><span class="row-label">' + esc(repo.name) + '</span>' +
+        '<span class="recent-when">' + esc(new Date(Number(repo.updated)).toLocaleDateString()) + '</span></div>';
+    }
+    document.getElementById('recent-list').innerHTML = html;
+    setShown('recent-header', count > 0);
+    setShown('recent-list', count > 0);
+  }
+
   function render() {
     var version = document.getElementById('ios-select').value;
     var sort = document.getElementById('sort-select').value;
     var list = document.getElementById('repo-list');
     var items = [];
+
+    renderRecent(version);
 
     for (var i = 0; i < repos.length; i++) {
       var repo = repos[i];
@@ -182,8 +230,8 @@
         var tweaks = it.repo.tweaks || [];
         html += '<div class="tweaks">';
         for (var t = 0; t < tweaks.length; t++) {
-          html += '<div class="tweak">';
-          // Version sits on the right, so it's easy to scan
+          // Tapping a tweak opens its detail sheet
+          html += '<div class="tweak tweak-tap" data-repo="' + it.i + '" data-tweak="' + t + '">';
           if (tweaks[t].version) {
             html += '<span class="tweak-version">' + esc(tweaks[t].version) + '</span>';
           }
@@ -196,6 +244,10 @@
         html += '<div class="tweak repo-meta">Last checked: ' + esc(lastCheckedText(it.st)) + '</div>';
         html += '<div class="tweak"><button class="fav-btn" data-url="' + esc(it.repo.url) + '">' +
           (it.fav ? '★ Saved' : '☆ Save to my list') + '</button></div>';
+        // Only repos whose owners opted in have an add_url (their Cydia source address)
+        if (it.repo.add_url) {
+          html += '<div class="tweak"><a class="add-btn" href="cydia://url/' + esc(it.repo.add_url) + '">Add to Cydia</a></div>';
+        }
         html += '<div class="tweak"><a class="report-link" href="' + esc(reportUrl(it.repo)) + '">Report a problem with this repo</a></div>';
         html += '</div>';
       }
@@ -223,6 +275,18 @@
       node = node.parentNode;
     }
 
+    // Tweak: open the detail sheet
+    node = target;
+    while (node && node !== this) {
+      if (node.className && node.className.indexOf('tweak-tap') !== -1) {
+        var ri = Number(node.getAttribute('data-repo'));
+        var ti = Number(node.getAttribute('data-tweak'));
+        showSheet(repos[ri], repos[ri].tweaks[ti]);
+        return;
+      }
+      node = node.parentNode;
+    }
+
     // Save button: toggle the saved state and redraw
     node = target;
     while (node && node !== this) {
@@ -234,10 +298,10 @@
       node = node.parentNode;
     }
 
-    // Report link: let the browser follow it, do not toggle the row
+    // Links (report and add to Cydia): let the browser follow them, do not toggle the row
     node = target;
     while (node && node !== this) {
-      if (node.className && node.className.indexOf('report-link') !== -1) {
+      if (node.className && (node.className.indexOf('report-link') !== -1 || node.className.indexOf('add-btn') !== -1)) {
         return;
       }
       node = node.parentNode;
@@ -276,6 +340,12 @@
     document.getElementById('ios-select').onchange = render;
     document.getElementById('sort-select').onchange = render;
     document.getElementById('repo-list').onclick = onListClick;
+
+    // Close button on the tweak sheet
+    document.getElementById('sheet').onclick = function (e) {
+      var t = e.target || e.srcElement;
+      if (t.className && t.className.indexOf('sheet-close') !== -1) { hideSheet(); }
+    };
 
     var box = document.getElementById('search-box');
     box.onkeyup = onSearch;
