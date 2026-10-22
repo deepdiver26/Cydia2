@@ -328,3 +328,11 @@ a.row-action:active {
   background-image: -webkit-gradient(linear, left top, left bottom, from(#b9c0ca), to(#dfe3e9));
   background-image: linear-gradient(#b9c0ca, #dfe3e9);
 }
+
+/* Version number on the right of each tweak */
+.tweak-version {
+  float: right;
+  font-size: 14px;
+  color: #2f5ea8;
+}
+
