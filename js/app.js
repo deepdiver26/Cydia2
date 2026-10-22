@@ -1,8 +1,9 @@
 /* Sourcebook. ES5 only, for iOS 6 Safari.
-   Loads data/repos.json (the list) and data/status.json (the latest pings). */
+   Loads data/repos.json and data/status.json. Saved repos live in localStorage. */
 (function () {
   var DAY = 24 * 60 * 60 * 1000;
-  var ISSUES_URL = 'https://github.com/deepdiver26/Sourcebook/issues/new';
+  var FAV_KEY = 'sourcebook_favs';
+  var RANK = { green: 0, orange: 1, red: 2, grey: 3 };
   var repos = [];
   var status = {};
   var openRows = {};
@@ -42,13 +43,11 @@
     return false;
   }
 
-  // Case-insensitive contains check. An empty query matches everything.
   function hit(text, q) {
     if (!q) { return true; }
     return String(text || '').toLowerCase().indexOf(q) !== -1;
   }
 
-  // Returns whether the repo matches, and whether a tweak inside it matched.
   function matchRepo(repo, q) {
     var result = { match: false, tweakHit: false };
     if (!q) { result.match = true; return result; }
@@ -61,6 +60,34 @@
       }
     }
     return result;
+  }
+
+  // Saved repos, stored per device. Wrapped in try/catch because private
+  // browsing or blocked storage can throw.
+  function getFavs() {
+    try { return JSON.parse(localStorage.getItem(FAV_KEY) || '[]'); }
+    catch (e) { return []; }
+  }
+  function setFavs(list) {
+    try { localStorage.setItem(FAV_KEY, JSON.stringify(list)); }
+    catch (e) { /* storage unavailable: the feature just won't persist */ }
+  }
+  function isFav(url) {
+    var list = getFavs();
+    for (var i = 0; i < list.length; i++) {
+      if (list[i] === url) { return true; }
+    }
+    return false;
+  }
+  function toggleFav(url) {
+    var list = getFavs();
+    var next = [];
+    var found = false;
+    for (var i = 0; i < list.length; i++) {
+      if (list[i] === url) { found = true; } else { next.push(list[i]); }
+    }
+    if (!found) { next.push(url); }
+    setFavs(next);
   }
 
   // Copy the URL. execCommand works on old Safari, where navigator.clipboard does not exist.
@@ -82,53 +109,78 @@
     return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
 
-  // Human-readable "last checked" time from the status file, or "never"
   function lastCheckedText(st) {
     var t = st.last_check || st.last_ok;
     if (!t) { return 'never'; }
     return new Date(Number(t)).toLocaleString();
   }
 
-  // Opens a new GitHub issue with the repo name and URL filled in
   function reportUrl(repo) {
     var title = 'Problem with ' + repo.name + ' (' + repo.url + ')';
     var body = 'What happened:\n\nYour iOS version and device:\n';
-    return ISSUES_URL + '?title=' + encodeURIComponent(title) + '&body=' + encodeURIComponent(body);
+    return 'https://github.com/deepdiver26/Sourcebook/issues/new?title=' +
+      encodeURIComponent(title) + '&body=' + encodeURIComponent(body);
+  }
+
+  // Sorts the visible items. "default" keeps the order in repos.json.
+  function sortItems(items, mode) {
+    items.sort(function (a, b) {
+      if (mode === 'name') {
+        var an = a.repo.name.toLowerCase(), bn = b.repo.name.toLowerCase();
+        return an < bn ? -1 : (an > bn ? 1 : 0);
+      }
+      if (mode === 'status') { return RANK[a.light] - RANK[b.light]; }
+      if (mode === 'tweaks') { return (b.repo.tweaks || []).length - (a.repo.tweaks || []).length; }
+      if (mode === 'saved') { return (b.fav ? 1 : 0) - (a.fav ? 1 : 0); }
+      return a.i - b.i;
+    });
+    return items;
   }
 
   function render() {
     var version = document.getElementById('ios-select').value;
+    var sort = document.getElementById('sort-select').value;
     var list = document.getElementById('repo-list');
-    var html = '';
-    var shown = 0;
+    var items = [];
 
     for (var i = 0; i < repos.length; i++) {
       var repo = repos[i];
       if (!servesVersion(repo, version)) { continue; }
-
       var m = matchRepo(repo, query);
       if (!m.match) { continue; }
-      shown++;
-
       var st = status[repo.url] || {};
-      var light = lightFor(st.last_ok);
-      var key = 'r' + i;
+      items.push({
+        i: i,
+        repo: repo,
+        m: m,
+        st: st,
+        light: lightFor(st.last_ok),
+        fav: isFav(repo.url)
+      });
+    }
+
+    sortItems(items, sort);
+
+    var html = '';
+    for (var k = 0; k < items.length; k++) {
+      var it = items[k];
+      var key = 'r' + it.i;
       // Expand automatically when the search matched one of the repo's tweaks
-      var open = !!openRows[key] || (query && m.tweakHit);
+      var open = !!openRows[key] || (query && it.m.tweakHit);
 
       html += '<div class="row-action" data-key="' + key + '">';
       html += '<div class="repo-main">';
-      html += '<span class="dot dot-' + light + '"></span>';
-      html += '<span class="repo-name">' + esc(repo.name) + '</span>';
-      html += '<button class="copy-btn" data-url="' + esc(repo.url) + '">Copy</button>';
-      html += '<span class="repo-url">' + esc(repo.url) + '</span>';
+      html += '<span class="dot dot-' + it.light + '"></span>';
+      html += '<span class="repo-name">' + esc(it.repo.name) + (it.fav ? ' <span class="star">★</span>' : '') + '</span>';
+      html += '<button class="copy-btn" data-url="' + esc(it.repo.url) + '">Copy</button>';
+      html += '<span class="repo-url">' + esc(it.repo.url) + '</span>';
       html += '</div>';
       html += '<span class="chevron' + (open ? ' open' : '') + '">&rsaquo;</span>';
       html += '</div>';
 
       if (open) {
+        var tweaks = it.repo.tweaks || [];
         html += '<div class="tweaks">';
-        var tweaks = repo.tweaks || [];
         for (var t = 0; t < tweaks.length; t++) {
           html += '<div class="tweak">' + esc(tweaks[t].name);
           if (tweaks[t].description) {
@@ -136,13 +188,15 @@
           }
           html += '</div>';
         }
-        html += '<div class="tweak repo-meta">Last checked: ' + esc(lastCheckedText(st)) + '</div>';
-        html += '<div class="tweak"><a class="report-link" href="' + esc(reportUrl(repo)) + '">Report a problem with this repo</a></div>';
+        html += '<div class="tweak repo-meta">Last checked: ' + esc(lastCheckedText(it.st)) + '</div>';
+        html += '<div class="tweak"><button class="fav-btn" data-url="' + esc(it.repo.url) + '">' +
+          (it.fav ? '★ Saved' : '☆ Save to my list') + '</button></div>';
+        html += '<div class="tweak"><a class="report-link" href="' + esc(reportUrl(it.repo)) + '">Report a problem with this repo</a></div>';
         html += '</div>';
       }
     }
 
-    if (!shown) {
+    if (!items.length) {
       var msg = query
         ? 'No matches for "' + esc(rawQuery) + '"'
         : 'No repositories for this iOS version';
@@ -164,6 +218,17 @@
       node = node.parentNode;
     }
 
+    // Save button: toggle the saved state and redraw
+    node = target;
+    while (node && node !== this) {
+      if (node.className && node.className.indexOf('fav-btn') !== -1) {
+        toggleFav(node.getAttribute('data-url'));
+        render();
+        return;
+      }
+      node = node.parentNode;
+    }
+
     // Report link: let the browser follow it, do not toggle the row
     node = target;
     while (node && node !== this) {
@@ -173,7 +238,7 @@
       node = node.parentNode;
     }
 
-    // Row tap: expand or collapse tweaks
+    // Row tap: expand or collapse
     node = target;
     while (node && node !== this) {
       if (node.getAttribute && node.getAttribute('data-key')) {
@@ -204,6 +269,7 @@
 
   function init() {
     document.getElementById('ios-select').onchange = render;
+    document.getElementById('sort-select').onchange = render;
     document.getElementById('repo-list').onclick = onListClick;
 
     var box = document.getElementById('search-box');
