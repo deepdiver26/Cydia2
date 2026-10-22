@@ -1,10 +1,12 @@
-/* Cydia 2.0 status page. ES5 only, for iOS 6 Safari.
+/* Repo Directory. ES5 only, for iOS 6 Safari.
    Loads data/repos.json (the list) and data/status.json (the latest pings). */
 (function () {
   var DAY = 24 * 60 * 60 * 1000;
   var repos = [];
   var status = {};
   var openRows = {};
+  var rawQuery = '';
+  var query = '';
 
   function getJSON(url, cb) {
     var xhr = new XMLHttpRequest();
@@ -39,6 +41,27 @@
     return false;
   }
 
+  // Case-insensitive contains check. An empty query matches everything.
+  function hit(text, q) {
+    if (!q) { return true; }
+    return String(text || '').toLowerCase().indexOf(q) !== -1;
+  }
+
+  // Returns whether the repo matches, and whether a tweak inside it matched.
+  function matchRepo(repo, q) {
+    var result = { match: false, tweakHit: false };
+    if (!q) { result.match = true; return result; }
+    if (hit(repo.name, q) || hit(repo.url, q)) { result.match = true; }
+    var tweaks = repo.tweaks || [];
+    for (var t = 0; t < tweaks.length; t++) {
+      if (hit(tweaks[t].name, q) || hit(tweaks[t].description, q)) {
+        result.match = true;
+        result.tweakHit = true;
+      }
+    }
+    return result;
+  }
+
   // Copy the URL. execCommand works on old Safari, where navigator.clipboard does not exist.
   function copyText(text, btn) {
     var ta = document.createElement('textarea');
@@ -67,12 +90,16 @@
     for (var i = 0; i < repos.length; i++) {
       var repo = repos[i];
       if (!servesVersion(repo, version)) { continue; }
+
+      var m = matchRepo(repo, query);
+      if (!m.match) { continue; }
       shown++;
 
       var st = status[repo.url] || {};
       var light = lightFor(st.last_ok);
       var key = 'r' + i;
-      var open = !!openRows[key];
+      // Expand automatically when the search matched one of the repo's tweaks
+      var open = !!openRows[key] || (query && m.tweakHit);
 
       html += '<div class="row-action" data-key="' + key + '">';
       html += '<div class="repo-main">';
@@ -98,7 +125,10 @@
     }
 
     if (!shown) {
-      html = '<div class="row"><span class="row-label muted">No repositories for this iOS version</span></div>';
+      var msg = query
+        ? 'No matches for "' + esc(rawQuery) + '"'
+        : 'No repositories for this iOS version';
+      html = '<div class="row"><span class="row-label muted">' + msg + '</span></div>';
     }
     list.innerHTML = html;
   }
@@ -129,6 +159,13 @@
     }
   }
 
+  function onSearch() {
+    var box = document.getElementById('search-box');
+    rawQuery = box.value.replace(/^\s+|\s+$/g, '');
+    query = rawQuery.toLowerCase();
+    render();
+  }
+
   function showUpdated() {
     var el = document.getElementById('updated-text');
     if (status.updated) {
@@ -141,6 +178,11 @@
   function init() {
     document.getElementById('ios-select').onchange = render;
     document.getElementById('repo-list').onclick = onListClick;
+
+    var box = document.getElementById('search-box');
+    box.onkeyup = onSearch;
+    box.oninput = onSearch;
+    box.onsearch = onSearch; // fires when the iOS clear X is tapped
 
     getJSON('data/repos.json', function (err, data) {
       if (err) {
