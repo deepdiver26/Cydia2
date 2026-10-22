@@ -258,3 +258,14 @@ a.row-action:active {
   box-sizing: border-box;
 }
 
+/* Repo details: last checked and report link */
+.repo-meta {
+  font-size: 13px;
+  color: #6d6d72;
+}
+.report-link {
+  font-size: 15px;
+  color: #385487;
+  text-decoration: none;
+}
+
