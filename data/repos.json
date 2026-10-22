@@ -4,8 +4,8 @@
     "url": "example-repo1.test",
     "serving": [6, 7, 9],
     "tweaks": [
-      { "name": "Battery Percent Display", "description": "Shows the exact battery percentage in the status bar." },
-      { "name": "Quick Respring Button", "description": "Adds a one-tap respring option to the Control Center area." }
+      { "name": "Battery Percent Display", "version": "1.2.0", "description": "Shows the exact battery percentage in the status bar." },
+      { "name": "Quick Respring Button", "version": "0.4.1", "description": "Restarts SpringBoard with one tap from Control Center." }
     ]
   },
   {
@@ -13,7 +13,7 @@
     "url": "example-repo2.test",
     "serving": [5, 6, 7],
     "tweaks": [
-      { "name": "Custom Lock Screen Clock", "description": "Changes the lock screen clock font and size." }
+      { "name": "Custom Lock Screen Clock", "version": "2.0.0", "description": "Changes the lock screen clock's font and size." }
     ]
   },
   {
@@ -21,7 +21,7 @@
     "url": "example-repo3.test",
     "serving": [1, 2, 3, 4, 5, 6, 7, 8, 9],
     "tweaks": [
-      { "name": "Notification Sound Pack", "description": "A set of alternative notification sounds." }
+      { "name": "Notification Sound Pack", "version": "1.0.3", "description": "Adds alternative sounds for notifications and alerts." }
     ]
   },
   {
