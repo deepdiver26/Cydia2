@@ -1,8 +1,19 @@
 {
-  "updated": 1792660000000,
+  "updated": 1792670027018,
   "repos": {
-    "example-repo1.test": { "last_ok": 1792660000000 },
-    "example-repo2.test": { "last_ok": 1792487600000 },
-    "example-repo3.test": { "last_ok": 1791796000000 }
+    "example-repo1.test": {
+      "last_ok": 1792660000000
+    },
+    "example-repo2.test": {
+      "last_ok": 1792487600000
+    },
+    "example-repo3.test": {
+      "last_ok": 1791796000000
+    },
+    "deepdiver26.github.io/Sourcebook/": {
+      "last_ok": 1792670027018,
+      "last_check": 1792670027018,
+      "last_result": true
+    }
   }
 }
