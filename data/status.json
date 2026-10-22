@@ -1,8 +1,8 @@
 {
   "updated": 1761053400000,
   "repos": {
-    "cydia.site1.com": { "last_ok": 1761053400000 },
-    "repo.nekokawa.com": { "last_ok": 1760707800000 },
-    "tweaks.saurik.site": { "last_ok": 1760016600000 }
+    "example-repo1.test": { "last_ok": 1761053400000 },
+    "example-repo2.test": { "last_ok": 1760707800000 },
+    "example-repo3.test": { "last_ok": 1760016600000 }
   }
 }
