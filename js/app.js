@@ -43,6 +43,11 @@
     return false;
   }
 
+  // Adds https:// when the stored address is a bare domain, so copied links work in package managers
+  function fullUrl(u) {
+    return /^https?:\/\//i.test(u) ? u : 'https://' + u;
+  }
+
   function hit(text, q) {
     if (!q) { return true; }
     return String(text || '').toLowerCase().indexOf(q) !== -1;
@@ -220,7 +225,8 @@
       html += '<div class="repo-main">';
       html += '<span class="dot dot-' + it.light + '"></span>';
       html += '<span class="repo-name">' + esc(it.repo.name) + (it.fav ? ' <span class="star">★</span>' : '') + '</span>';
-      html += '<button class="copy-btn" data-url="' + esc(it.repo.url) + '">Copy</button>';
+      // Copy gives the full https:// address, the one package managers need
+      html += '<button class="copy-btn" data-url="' + esc(fullUrl(it.repo.url)) + '">Copy</button>';
       html += '<span class="repo-url">' + esc(it.repo.url) + '</span>';
       html += '</div>';
       html += '<span class="chevron' + (open ? ' open' : '') + '">&rsaquo;</span>';
