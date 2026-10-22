@@ -1,7 +1,8 @@
-/* Repo Directory. ES5 only, for iOS 6 Safari.
+/* Sourcebook. ES5 only, for iOS 6 Safari.
    Loads data/repos.json (the list) and data/status.json (the latest pings). */
 (function () {
   var DAY = 24 * 60 * 60 * 1000;
+  var ISSUES_URL = 'https://github.com/deepdiver26/Sourcebook/issues/new';
   var repos = [];
   var status = {};
   var openRows = {};
@@ -81,6 +82,20 @@
     return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
 
+  // Human-readable "last checked" time from the status file, or "never"
+  function lastCheckedText(st) {
+    var t = st.last_check || st.last_ok;
+    if (!t) { return 'never'; }
+    return new Date(Number(t)).toLocaleString();
+  }
+
+  // Opens a new GitHub issue with the repo name and URL filled in
+  function reportUrl(repo) {
+    var title = 'Problem with ' + repo.name + ' (' + repo.url + ')';
+    var body = 'What happened:\n\nYour iOS version and device:\n';
+    return ISSUES_URL + '?title=' + encodeURIComponent(title) + '&body=' + encodeURIComponent(body);
+  }
+
   function render() {
     var version = document.getElementById('ios-select').value;
     var list = document.getElementById('repo-list');
@@ -111,15 +126,18 @@
       html += '<span class="chevron' + (open ? ' open' : '') + '">&rsaquo;</span>';
       html += '</div>';
 
-      if (open && repo.tweaks && repo.tweaks.length) {
+      if (open) {
         html += '<div class="tweaks">';
-        for (var t = 0; t < repo.tweaks.length; t++) {
-          html += '<div class="tweak">' + esc(repo.tweaks[t].name);
-          if (repo.tweaks[t].description) {
-            html += '<span class="tweak-desc">' + esc(repo.tweaks[t].description) + '</span>';
+        var tweaks = repo.tweaks || [];
+        for (var t = 0; t < tweaks.length; t++) {
+          html += '<div class="tweak">' + esc(tweaks[t].name);
+          if (tweaks[t].description) {
+            html += '<span class="tweak-desc">' + esc(tweaks[t].description) + '</span>';
           }
           html += '</div>';
         }
+        html += '<div class="tweak repo-meta">Last checked: ' + esc(lastCheckedText(st)) + '</div>';
+        html += '<div class="tweak"><a class="report-link" href="' + esc(reportUrl(repo)) + '">Report a problem with this repo</a></div>';
         html += '</div>';
       }
     }
@@ -141,6 +159,15 @@
     while (node && node !== this) {
       if (node.className && node.className.indexOf('copy-btn') !== -1) {
         copyText(node.getAttribute('data-url'), node);
+        return;
+      }
+      node = node.parentNode;
+    }
+
+    // Report link: let the browser follow it, do not toggle the row
+    node = target;
+    while (node && node !== this) {
+      if (node.className && node.className.indexOf('report-link') !== -1) {
         return;
       }
       node = node.parentNode;
