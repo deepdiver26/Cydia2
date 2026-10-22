@@ -336,3 +336,12 @@ a.row-action:active {
   color: #2f5ea8;
 }
 
+/* Recently changed dates and tweak tap */
+.recent-when {
+  float: right;
+  font-size: 13px;
+  color: #6b717c;
+}
+.tweak-tap {
+  cursor: pointer;
+}
