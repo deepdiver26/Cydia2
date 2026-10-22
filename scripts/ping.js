@@ -31,8 +31,16 @@ function ping(host) {
   const out = { updated: now, repos: {} };
 
   for (const repo of repos) {
-    const ok = await ping(repo.url);
     const prev = (previous.repos || {})[repo.url] || {};
+
+    // Sample .test domains never respond. Keep their existing status so the demo colours stay.
+    if (repo.url.endsWith('.test')) {
+      if (prev.last_ok !== undefined) { out.repos[repo.url] = prev; }
+      console.log(`${repo.url}: skipped (sample domain)`);
+      continue;
+    }
+
+    const ok = await ping(repo.url);
     out.repos[repo.url] = {
       last_ok: ok ? now : (prev.last_ok || null),
       last_check: now,
