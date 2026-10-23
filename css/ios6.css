@@ -345,3 +345,12 @@ a.row-action:active {
 .tweak-tap {
   cursor: pointer;
 }
+
+.nav-logo {
+  width: 26px;
+  height: 26px;
+  vertical-align: middle;
+  margin-right: 6px;
+  margin-top: -3px;
+  border-radius: 6px;
+}
