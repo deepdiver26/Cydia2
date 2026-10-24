@@ -7,6 +7,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <title>Sourcebook</title>
 <link rel="apple-touch-icon-precomposed" href="apple-touch-icon-precomposed.png">
+<script type="text/javascript" src="js/theme.js"></script>
 <link rel="stylesheet" type="text/css" href="css/ios6.css">
 </head>
 <body>
@@ -35,6 +36,13 @@
         <option value="8">iOS 8</option>
         <option value="9">iOS 9</option>
       </select>
+    </div>
+  </div>
+
+  <div class="group-header">Appearance</div>
+  <div class="group">
+    <div class="row">
+      <button id="theme-toggle" class="fav-btn">Dark mode: Off</button>
     </div>
   </div>
 
@@ -70,6 +78,8 @@
     <div class="row"><span class="row-label muted">Loading…</span></div>
   </div>
 
+  <div class="footer">Sample entries for now. These repos are placeholders and can't be installed.</div>
+
   <div class="group-header">Get listed</div>
   <div class="group">
     <div class="row-action">
@@ -80,6 +90,19 @@
   <div class="footer" id="updated-text"></div>
 </div>
 
+<script type="text/javascript">
+  (function () {
+    var btn = document.getElementById('theme-toggle');
+    function label() {
+      btn.innerHTML = 'Dark mode: ' + (sourcebookTheme.isDark() ? 'On' : 'Off');
+    }
+    btn.onclick = function () {
+      sourcebookTheme.toggle();
+      label();
+    };
+    label();
+  })();
+</script>
 <script type="text/javascript" src="js/app.js"></script>
 </body>
 </html>
