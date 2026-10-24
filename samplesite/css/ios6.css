@@ -354,3 +354,51 @@ a.row-action:active {
   margin-top: -3px;
   border-radius: 6px;
 }
+
+/* Dark mode: js/theme.js adds the class "dark" to <html> */
+html.dark, html.dark body {
+  background: #1c1e23;
+  background-image: none;
+  color: #e6e8ec;
+}
+html.dark .navbar {
+  background-color: #2a2d34;
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#3a3e47), color-stop(0.5, #2a2d34), to(#1f2227));
+  background-image: linear-gradient(#3a3e47, #2a2d34 50%, #1f2227);
+  border-bottom-color: #0c0d10;
+}
+html.dark .nav-title { color: #f2f3f5; text-shadow: 0 -1px 0 #000; }
+html.dark .nav-btn,
+html.dark .fav-btn {
+  color: #e6e8ec;
+  text-shadow: 0 -1px 0 #000;
+  border-color: #50555f;
+  background-color: #3a3e47;
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#4a4f59), to(#2e3238));
+  background-image: linear-gradient(#4a4f59, #2e3238);
+}
+html.dark .group { background-color: #2a2d34; border-color: #50555f; }
+html.dark .group-header,
+html.dark .footer { color: #aeb4bf; text-shadow: 0 -1px 0 #000; }
+html.dark .row,
+html.dark .row-action { color: #e6e8ec; border-top-color: #3a3e47; }
+html.dark a.row-action:active { background-color: #3a3e47; }
+html.dark .muted { color: #7a808b; }
+html.dark .repo-url,
+html.dark .report-link,
+html.dark .post-author { color: #7fa8e6; }
+html.dark .repo-meta,
+html.dark .tweak-desc,
+html.dark .post-date,
+html.dark .tweak-version,
+html.dark .recent-when { color: #9aa1ac; }
+html.dark .tweaks { background-color: #23262c; border-top-color: #3a3e47; }
+html.dark .tweak { border-top-color: #3a3e47; }
+html.dark .post { border-top-color: #3a3e47; }
+html.dark .search-box {
+  background-color: #1c1e23;
+  color: #e6e8ec;
+  border-color: #50555f;
+  box-shadow: none;
+}
+html.dark .ios-select { background: transparent; color: #7fa8e6; }
